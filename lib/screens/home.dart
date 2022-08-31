@@ -10,21 +10,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  List<Language> languages = [
-    Language("Android Nativo", "Linguagens C, Java, Kotlin"),
-    Language("Ios Nativo", "Linguagens Objective-C, Swift"),
-    Language("Flutter", "Linguagens Dart"),
-    Language("React Native", "Linguagens Javascript e Typescript"),
-    Language("Ionic", "Linguagens Javascript e Typescript")
-  ];
+  List<Language> languages = [];
 
   Widget title = const Text("Minhas Linguagens");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: title),
+      appBar: AppBar(
+        title: title,
+        actions: [
+          IconButton(onPressed: _goToAddLanguage, icon: const Icon(Icons.add))
+        ],
+      ),
       body: Column(
         children: [
           Wrap(
@@ -37,24 +35,34 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List<ChoiceChip> buildChoices(){
-    return languages.map((l) => ChoiceChip(
-        label: Text(l.title), 
-        selected: l.select,
-        onSelected: (value) => setState(() {
-          l.select = value;
-        }))).toList();
+  void _goToAddLanguage() {
+    Future future = Navigator.pushNamed(context, "/add");
+    future.then((language) => setState(() {
+          languages.add(language);
+        }));
   }
 
-  List<Widget> buildItemsList(){
-      return languages
+  List<ChoiceChip> buildChoices() {
+    return languages
+        .map((l) => ChoiceChip(
+            label: Text(l.title),
+            selected: l.select,
+            onSelected: (value) => setState(() {
+                  l.select = value;
+                })))
+        .toList();
+  }
+
+  List<Widget> buildItemsList() {
+    return languages
         .where((l) => l.select)
         .map((l) => Card(
-          child: ListTile(
-            leading: Icon(l.icon),
-            title: Text(l.title),
-            subtitle: Text(l.subTitle),
-          ),
-        )).toList();
+              child: ListTile(
+                leading: Icon(l.icon),
+                title: Text(l.title),
+                subtitle: Text(l.subTitle),
+              ),
+            ))
+        .toList();
   }
 }
